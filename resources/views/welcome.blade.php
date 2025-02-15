@@ -8,8 +8,8 @@
     <style>
         body { font-family: Arial, sans-serif; }
         .hero-section {
-            background: url('{{ asset('images/hero.jpg') }}') center center / cover no-repeat;
-            height: 600px; /* 高さを固定 */
+            background: url('{{ asset('images/今と過去.webp') }}') center bottom / cover no-repeat;
+            height: 700px; /* 高さを固定 */
             display: flex;
             justify-content: center;
             align-items: center;

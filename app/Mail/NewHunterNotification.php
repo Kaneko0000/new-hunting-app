@@ -16,7 +16,8 @@ class NewHunterNotification extends Mailable
 
     public $hunter;
 
-    public function __construct()
+    // public function __construct()
+    public function __construct(Hunter $hunter)
     {
         $this->hunter = $hunter;
     }

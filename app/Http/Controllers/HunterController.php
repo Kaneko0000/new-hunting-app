@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\HunterRequest;
 use App\Models\License;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\NewHunterNotification;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -32,49 +34,58 @@ class HunterController extends Controller
     }
 
     public function create() {
+        // dd('create メソッド実行'); 
         $prefectures = config('prefectures');
         $licenses = License::all(); // すべてのライセンスを取得
         return view('hunters.create', compact('prefectures', 'licenses'));
     }
 
-    public function store(HunterRequest $request)
-    {
-    // ハンター情報を作成
-    $hunter = Hunter::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'region' => $request->region,
-        'password' => Hash::make($request->password), // パスワードをハッシュ化
-        'status' => 'pending',
-    ]);
+    public function store(HunterRequest $request) {
+        // dd('store メソッド実行'); // ここで一度処理が止まるはず
+        dd($request->all()); // フォームから送信されたデータを全表示
+        // ハンター情報を作成
+        $hunter = Hunter::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'region' => $request->region,
+            'password' => Hash::make($request->password), // パスワードをハッシュ化
+            'status' => 'pending',
+        ]);
 
-    // 免許画像の保存
-    if ($request->hasFile('license_image')) {
-        $path = $request->file('license_image')->store('licenses', 'public');
-        $hunter->update(['license_image' => $path]);
-    }
-
-    // 管理者へ通知（エラーハンドリング追加）
-    try {
-        Mail::to('vs.noo.moo@gmail.com')->send(new NewHunterNotification($hunter));
-    } catch (\Exception $e) {
-        Log::error('管理者へのメール送信に失敗: ' . $e->getMessage());
-    }
-
-    // 免許の登録（多対多の関係）
-    if ($request->has('licenses')) {
-        foreach ($request->licenses as $license_id) {
-            $hunter->licenses()->attach((int)$license_id, [  // ここで整数にキャスト
-                'license_image' => $hunter->license_image, // すでに保存済みの画像パスを使用
-                'license_expiry' => $request->license_expiry,
-            ]);
+        // 免許画像の保存
+        if ($request->hasFile('license_image')) {
+            $path = $request->file('license_image')->store('licenses', 'public');
+            $hunter->update(['license_image' => $path]);
         }
-    }
 
-    // 登録完了後のリダイレクト
-    return redirect()->route('hunters.index')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
-}
+        // **ここで $hunter が null ではないか確認**
+        Log::info('新規ハンター登録: ', ['hunter' => $hunter]);
+
+        // 管理者へ通知（エラーハンドリング追加）
+        try {
+            // Mail::fake(); // 本番環境で送信せずにテストする
+            Mail::to('vs.noo.moo@gmail.com')->send(new NewHunterNotification($hunter));
+            // Mail::to('vs.noo.moo@gmail.com')->send(new \App\Mail\NewHunterNotification($hunter));
+            Log::info('メール送信成功: ' . $hunter->email);
+        } catch (\Exception $e) {
+            Log::error('管理者へのメール送信に失敗: ' . $e->getMessage());
+        }
+
+        // 免許の登録（多対多の関係）
+        if ($request->has('licenses')) {
+            foreach ($request->licenses as $license_id) {
+                $hunter->licenses()->attach((int)$license_id, [  // ここで整数にキャスト
+                    'license_image' => $hunter->license_image, // すでに保存済みの画像パスを使用
+                    'license_expiry' => $request->license_expiry,
+                ]);
+            }
+        }
+
+        // 登録完了後のリダイレクト
+        // return redirect()->route('hunters.index')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
+        return redirect('/')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
+    }
 
     public function show(string $id)
     {

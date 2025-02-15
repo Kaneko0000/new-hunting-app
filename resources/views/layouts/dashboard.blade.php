@@ -24,10 +24,10 @@
                     @endauth
                 </ul>
                 <ul class="navbar-nav ms-auto">
-                    @guest
+                    <!-- @guest
                         <li class="nav-item"><a href="{{ route('login') }}" class="btn btn-primary btn-sm me-2">ログイン</a></li>
                         <li class="nav-item"><a href="{{ route('hunters.create') }}" class="btn btn-success btn-sm">新規登録</a></li>
-                    @else
+                    @else -->
                         <li class="nav-item">
                             <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-danger btn-sm">
                                 ログアウト
@@ -36,7 +36,7 @@
                                 @csrf
                             </form>
                         </li>
-                    @endguest
+                    <!-- @endguest -->
                 </ul>
             </div>
         </div>

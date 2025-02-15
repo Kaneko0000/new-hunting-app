@@ -8,7 +8,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        <form action="{{ route('hunters.store') }}" method="POST">
+        <form action="{{ route('hunters.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label class="form-label">名前</label>
