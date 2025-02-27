@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Hash;
 class Hunter extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'email', 'phone', 'region', 'password'];
 
+    protected $table = 'hunters'; // 明示的にテーブル名を指定
+    protected $fillable = ['name', 'email', 'phone', 'region', 'password', 'license_image', 'license_expiry'];
     protected $hidden = ['password']; // パスワードを隠す
 
     protected $casts = [

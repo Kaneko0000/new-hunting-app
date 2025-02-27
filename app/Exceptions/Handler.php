@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {

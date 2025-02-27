@@ -1,12 +1,13 @@
-@extends('layouts.dashboard')
+@extends($isAdmin ?? false ? 'layouts.admin' : 'layouts.app')
+
+@section('title', '管理者用ハンター一覧')
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">ハンター一覧</h1>
+        <h1 class="mb-4">{{ $isAdmin ? '管理者用ハンター一覧' : 'ハンター一覧' }}</h1>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <!-- 検索フォーム -->
-            <form method="GET" action="{{ route('hunters.index') }}" class="d-flex">
+            <form method="GET" action="{{ route($isAdmin ? 'admin.hunters.index' : 'hunters.index') }}" class="d-flex">
                 <input type="text" name="name" class="form-control me-2" placeholder="名前で検索" value="{{ request('name') }}" style="width: 200px;">
                 <select name="region" class="form-control me-2" style="width: 200px;">
                     <option value="">地域で検索</option>
@@ -17,14 +18,10 @@
                     @endforeach
                 </select>
                 <button type="submit" class="btn btn-primary me-2">検索</button>
-                <a href="{{ route('hunters.index') }}" class="btn btn-secondary">リセット</a>
+                <a href="{{ route($isAdmin ? 'admin.hunters.index' : 'hunters.index') }}" class="btn btn-secondary">リセット</a>
             </form>
-
-            <!-- 新規追加ボタン -->
-            <a href="{{ route('hunters.create') }}" class="btn btn-success">+ 新規追加</a>
         </div>
 
-        <!-- ハンター一覧テーブル -->
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
                 <tr>
@@ -55,7 +52,7 @@
                             @if($hunter->status === 'approved')
                                 <span class="badge bg-success">承認済み</span>
                             @else
-                                <form action="{{ route('hunters.approve', $hunter->id) }}" method="POST">
+                                <form action="{{ route('admin.hunters.approve', $hunter->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-primary btn-sm">承認</button>
                                 </form>

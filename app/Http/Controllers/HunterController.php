@@ -21,16 +21,20 @@ class HunterController extends Controller
     {
         $query = Hunter::with('licenses');
         $prefectures = config('prefectures');
-
-        if($request->filled('name')) {
+    
+        if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        if($request->filled('region')) {
+        if ($request->filled('region')) {
             $query->where('region', $request->region);
         }
-
+    
         $hunters = $query->get();
-        return view('hunters.index', compact('hunters', 'prefectures'));
+
+        // ユーザーが管理者であるかどうかを判定
+        $isAdmin = request()->is('admin/*');
+    
+        return view('hunters.index', compact('hunters', 'prefectures', 'isAdmin'));
     }
 
     public function create() {
@@ -40,52 +44,59 @@ class HunterController extends Controller
         return view('hunters.create', compact('prefectures', 'licenses'));
     }
 
-    public function store(HunterRequest $request) {
-        // dd('store メソッド実行'); // ここで一度処理が止まるはず
-        dd($request->all()); // フォームから送信されたデータを全表示
+    public function store(Request $request) {
+        // フォームからのリクエストデータをログ出力
+        Log::info('受け取ったリクエスト:', $request->all());
+    
+        // バリデーション（失敗時に即リダイレクト）
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:hunters,email',
+            'phone' => 'required|regex:/^[0-9]{10,11}$/',
+            'region' => 'required|string|max:255',
+            'password' => 'required|min:8|confirmed',
+            'license_expiry' => 'nullable|date',
+            'license_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+    
+        // 🔥 バリデーションを通過した場合のみ以下の処理を実行 🔥
+    
         // ハンター情報を作成
         $hunter = Hunter::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'region' => $request->region,
-            'password' => Hash::make($request->password), // パスワードをハッシュ化
-            'status' => 'pending',
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'],
+            'region' => $validatedData['region'],
+            'password' => Hash::make($validatedData['password']),
+            'license_expiry' => $validatedData['license_expiry'] ?? null, // 有効期限を保存
         ]);
-
-        // 免許画像の保存
+    
+        // ここで保存できているかログ確認
+        Log::info('保存後のハンター情報: ', ['hunter' => $hunter]);
+    
+        // 🔥 免許画像を保存
         if ($request->hasFile('license_image')) {
             $path = $request->file('license_image')->store('licenses', 'public');
+            Log::info('画像パス: ', ['path' => $path]);
+    
+            // `Hunter` に保存
             $hunter->update(['license_image' => $path]);
         }
-
-        // **ここで $hunter が null ではないか確認**
-        Log::info('新規ハンター登録: ', ['hunter' => $hunter]);
-
-        // 管理者へ通知（エラーハンドリング追加）
+    
         try {
-            // Mail::fake(); // 本番環境で送信せずにテストする
             Mail::to('vs.noo.moo@gmail.com')->send(new NewHunterNotification($hunter));
-            // Mail::to('vs.noo.moo@gmail.com')->send(new \App\Mail\NewHunterNotification($hunter));
             Log::info('メール送信成功: ' . $hunter->email);
         } catch (\Exception $e) {
             Log::error('管理者へのメール送信に失敗: ' . $e->getMessage());
         }
-
-        // 免許の登録（多対多の関係）
-        if ($request->has('licenses')) {
-            foreach ($request->licenses as $license_id) {
-                $hunter->licenses()->attach((int)$license_id, [  // ここで整数にキャスト
-                    'license_image' => $hunter->license_image, // すでに保存済みの画像パスを使用
-                    'license_expiry' => $request->license_expiry,
-                ]);
-            }
-        }
-
-        // 登録完了後のリダイレクト
-        // return redirect()->route('hunters.index')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
-        return redirect('/')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
+    
+        return redirect()->route('hunters.pending')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
     }
+    
+    
+
+
+
 
     public function show(string $id)
     {
@@ -117,11 +128,20 @@ class HunterController extends Controller
         return redirect()->route('hunters.index')->with('success', 'ハンター情報を更新しました！');
     }
 
+    // 管理者用のdestroy
+    public function adminDestroy(Hunter $hunter)
+    {
+        $hunter->delete();
+        return redirect()->route('admin.hunters.index')->with('success', 'ハンターを削除しました！');
+    }
+
+    // 一般ユーザー用のdestroy
     public function destroy(Hunter $hunter)
     {
         $hunter->delete();
         return redirect()->route('hunters.index')->with('success', 'ハンターを削除しました！');
     }
+
 
     public function approve($id)
     {
@@ -129,7 +149,29 @@ class HunterController extends Controller
         $hunter->status = 'approved';  // ステータスを 'approved' に変更
         $hunter->save();
 
-        return redirect()->route('hunters.index')->with('success', 'ハンターが承認されました。');
+        return redirect()->back()->with('success', 'ハンターを承認しました。');
     }
+
+    public function dashboard()
+    {
+        $hunter = auth()->user();
+        return view('hunters.dashboard', compact('hunter'));
+    }
+
+
+    public function adminIndex()
+    {
+        $hunters = Hunter::all();
+        $isAdmin = true;
+        $prefectures = config('prefectures');
+    
+        return view('admin.hunters.index', [
+            'hunters' => $hunters,
+            'prefectures' => $prefectures,
+            'isAdmin' => $isAdmin
+        ]);
+    }
+    
+    
 
 }

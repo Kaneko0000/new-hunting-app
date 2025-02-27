@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
@@ -29,21 +29,20 @@ Route::get('/dashboard', function () {
 
 // **管理者専用ルート**
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    
-    // **管理者専用のログアウトルートは不要なので削除**
-    // Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
 
-    // **ハンター承認ルート（管理者のみアクセス可能）**
-    Route::post('/hunters/{id}/approve', [HunterController::class, 'approve'])->name('hunters.approve');
+    Route::get('/hunters', [HunterController::class, 'adminIndex'])->name('admin.hunters.index');
+    Route::post('/hunters/{id}/approve', [HunterController::class, 'approve'])->name('admin.hunters.approve');
 });
 
 // **ハンター専用ルート**
-Route::middleware(['auth', 'role:hunter'])->group(function () {
-    Route::get('/hunters/dashboard', function () {
-        return view('hunters.dashboard');
-    })->name('hunters.dashboard');
+Route::prefix('hunters')->middleware(['auth', 'role:hunter'])->group(function () {
+    Route::get('/dashboard', [HunterController::class, 'dashboard'])->name('hunters.dashboard');
+    Route::get('/', [HunterController::class, 'index'])->name('hunters.index');
 });
+
 
 // **プロフィール管理（認証ユーザーのみ）**
 Route::middleware('auth')->group(function () {
@@ -52,12 +51,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// **ハンター認証関連ルート**
+Route::get('/hunters/pending', function () {
+    return view('hunters.pending');
+})->name('hunters.pending');
+
+// **ハンター認証関連**
+Route::get('/hunters/register', [HunterController::class, 'create'])->name('hunters.register');
+Route::post('/hunters/register', [HunterController::class, 'store']);
+
 Route::get('/hunters/login', [HunterAuthController::class, 'showLoginForm'])->name('hunters.login');
 Route::post('/hunters/login', [HunterAuthController::class, 'login']);
 Route::post('/hunters/logout', [HunterAuthController::class, 'logout'])->name('hunters.logout');
 
+
 // **ハンターのリソースルート（CRUD操作）**
 Route::resource('hunters', HunterController::class);
 
-require __DIR__.'/auth.php'; // 認証関連のルート
+require __DIR__.'/auth.php'; // 認証関連のルート -->

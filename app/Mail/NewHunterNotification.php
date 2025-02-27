@@ -24,9 +24,12 @@ class NewHunterNotification extends Mailable
 
     public function build()
     {
-        return $this->subject('新しいハンターが登録されました')
+        return $this->subject('【狩猟アプリ】新しいハンターが登録されました')
                     ->view('emails.new_hunter_notification')
-                    ->with(['hunter' => $this->hunter])
+                    ->with([
+                        'hunter' => $this->hunter,
+                        'adminLink' => route('admin.hunters.index'),
+                    ])
                     ->attach(storage_path('app/public/' . $this->hunter->license_image));
     }
 
@@ -46,7 +49,7 @@ class NewHunterNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.new_hunter_notification', // ✅ 正しいビューのパスを指定
         );
     }
 

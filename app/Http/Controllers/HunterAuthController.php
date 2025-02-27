@@ -16,22 +16,23 @@ class HunterAuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
     
-        $credentials = $request->only('email', 'password');
-    
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-    
-            // **管理者なら管理者ダッシュボードへ、ハンターならハンターダッシュボードへ**
-            return redirect()->route($user->role === 'admin' ? 'admin.dashboard' : 'hunters.dashboard');
+            $request->session()->regenerate();
+            return auth()->user()->role === 'admin'
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('hunters.dashboard');
         }
     
-        return back()->withErrors(['email' => 'ログイン情報が正しくありません']);
+        return back()->withErrors([
+            'email' => 'ログイン情報が間違っています。',
+        ]);
     }
+    
 
     public function logout()
     {

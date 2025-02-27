@@ -37,13 +37,17 @@ class HunterRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('hunters', 'email')->ignore($hunterId)],
-            'phone' => ['required', 'regex:/^[0-9]{10,11}$/', Rule::unique('hunters', 'phone')->ignore($hunterId)],
+            'email' => ['required', 'email'],
+            'phone' => ['required', 'regex:/^[0-9]{10,11}$/'],
             'region' => 'required|string|max:255',
+            'password' => 'required|min:8|confirmed',
+            // 'email' => ['required', 'email', Rule::unique('hunters', 'email')->ignore($hunterId)],
+            // 'phone' => ['required', 'regex:/^[0-9]{10,11}$/', Rule::unique('hunters', 'phone')->ignore($hunterId)],
+            // 'region' => 'required|string|max:255',
             'licenses' => 'required|array', // 狩猟免許（複数選択）
             'license_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // 画像アップロード
-            'license_expiry' => 'nullable|date', // 免許有効期限
-            'password' => $hunterId ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed',
+            // 'license_expiry' => 'nullable|date', // 免許有効期限
+            // 'password' => $hunterId ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed',
         ];
     }
 
