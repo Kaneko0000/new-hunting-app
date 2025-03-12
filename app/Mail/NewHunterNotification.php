@@ -24,11 +24,16 @@ class NewHunterNotification extends Mailable
 
     public function build()
     {
+        $adminLoginUrl = route('admin.login'); // 生成されるURLを取得
+        \Log::info('管理者ログインURL: ' . $adminLoginUrl); // 🔥 ログで確認
+
         return $this->subject('【狩猟アプリ】新しいハンターが登録されました')
                     ->view('emails.new_hunter_notification')
                     ->with([
                         'hunter' => $this->hunter,
-                        'adminLink' => route('admin.hunters.index'),
+                        // 'adminLink' => route('admin.hunters.index'),
+                        'adminLink' => route('admin.login'),
+                        // 'adminLink' => $adminLoginUrl, // ✅ 生成されたURLを使う
                     ])
                     ->attach(storage_path('app/public/' . $this->hunter->license_image));
     }

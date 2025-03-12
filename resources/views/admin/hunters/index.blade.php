@@ -3,11 +3,11 @@
 
 @section('content')
     <h1 class="mb-4 mt-55 pb-2 text-center">
-      管理者用ハンター一覧
+        管理者用ハンター一覧
     </h1>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <form method="GET" action="{{ route($isAdmin ? 'admin.hunters.index' : 'hunters.index') }}" class="d-flex">
+        <form method="GET" action="{{ route('admin.hunters.index') }}" class="d-flex">
             <input type="text" name="name" class="form-control me-2" placeholder="名前で検索" value="{{ request('name') }}" style="width: 200px;">
             <select name="region" class="form-control me-2" style="width: 200px;">
                 <option value="">地域で検索</option>
@@ -18,7 +18,7 @@
                 @endforeach
             </select>
             <button type="submit" class="btn btn-primary me-2">検索</button>
-            <a href="{{ route($isAdmin ? 'admin.hunters.index' : 'hunters.index') }}" class="btn btn-secondary">リセット</a>
+            <a href="{{ route('admin.hunters.index') }}" class="btn btn-secondary">リセット</a>
         </form>
     </div>
 
@@ -52,15 +52,14 @@
                         @if($hunter->status === 'approved')
                             <span class="badge bg-success">承認済み</span>
                         @else
-                            <form action="{{ route('admin.hunters.approve', $hunter->id) }}" method="POST">
+                            <form method="POST" action="{{ route('admin.hunters.approve', ['id' => $hunter->id]) }}">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-primary btn-sm px-3 py-1">承認</button>
                             </form>
                         @endif
                     </td>
                     <td class="d-flex gap-2 justify-content-center align-items-center">
-                        <a href="{{ route('hunters.edit', $hunter->id) }}" class="btn btn-warning btn-sm btn-action">編集</a>
-                        <form action="{{ route('hunters.destroy', $hunter->id) }}" method="POST" class="m-0 p-0 d-inline-block">
+                        <form action="{{ route('admin.hunters.destroy', $hunter->id) }}" method="POST" class="m-0 p-0 d-inline-block">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm btn-action">削除</button>

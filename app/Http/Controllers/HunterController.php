@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NewHunterNotification;
 use Illuminate\Support\Facades\Log;
 
-
-
-
 class HunterController extends Controller
 {
     public function index(Request $request)
@@ -93,10 +90,6 @@ class HunterController extends Controller
         return redirect()->route('hunters.pending')->with('success', '登録申請が完了しました。管理者の承認をお待ちください。');
     }
     
-    
-
-
-
 
     public function show(string $id)
     {
@@ -128,13 +121,6 @@ class HunterController extends Controller
         return redirect()->route('hunters.index')->with('success', 'ハンター情報を更新しました！');
     }
 
-    // 管理者用のdestroy
-    public function adminDestroy(Hunter $hunter)
-    {
-        $hunter->delete();
-        return redirect()->route('admin.hunters.index')->with('success', 'ハンターを削除しました！');
-    }
-
     // 一般ユーザー用のdestroy
     public function destroy(Hunter $hunter)
     {
@@ -142,36 +128,10 @@ class HunterController extends Controller
         return redirect()->route('hunters.index')->with('success', 'ハンターを削除しました！');
     }
 
-
-    public function approve($id)
-    {
-        $hunter = Hunter::findOrFail($id);
-        $hunter->status = 'approved';  // ステータスを 'approved' に変更
-        $hunter->save();
-
-        return redirect()->back()->with('success', 'ハンターを承認しました。');
-    }
-
     public function dashboard()
     {
         $hunter = auth()->user();
         return view('hunters.dashboard', compact('hunter'));
     }
-
-
-    public function adminIndex()
-    {
-        $hunters = Hunter::all();
-        $isAdmin = true;
-        $prefectures = config('prefectures');
-    
-        return view('admin.hunters.index', [
-            'hunters' => $hunters,
-            'prefectures' => $prefectures,
-            'isAdmin' => $isAdmin
-        ]);
-    }
-    
-    
 
 }

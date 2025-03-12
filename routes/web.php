@@ -1,9 +1,10 @@
 <!-- <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HunterController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\HunterAuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HunterController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,40 +13,36 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// **ログイン関連**
-Route::get('/login', [HunterAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [HunterAuthController::class, 'login']);
-Route::post('/logout', [HunterAuthController::class, 'logout'])->name('logout');
-
-// **ログイン後のリダイレクト修正**
-Route::get('/dashboard', function () {
-    if (Auth::check()) {
-        return Auth::user()->role === 'admin'
-            ? redirect()->route('admin.dashboard')  // 管理者なら管理画面へ
-            : redirect()->route('hunters.dashboard'); // ハンターならハンター画面へ
-    }
-    return redirect('/login'); // 未ログインならログインページへ
-})->name('dashboard');
-
-// **管理者専用ルート**
-Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-
-    Route::get('/hunters', [HunterController::class, 'adminIndex'])->name('admin.hunters.index');
-    Route::post('/hunters/{id}/approve', [HunterController::class, 'approve'])->name('admin.hunters.approve');
-});
-
 // **ハンター専用ルート**
-Route::prefix('hunters')->middleware(['auth', 'role:hunter'])->group(function () {
+Route::middleware(['auth:hunter'])->prefix('hunters')->group(function () {
     Route::get('/dashboard', [HunterController::class, 'dashboard'])->name('hunters.dashboard');
     Route::get('/', [HunterController::class, 'index'])->name('hunters.index');
+});
+
+// **管理者認証関連**
+Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+// **管理者専用ルート**
+Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/hunters', [AdminController::class, 'adminIndex'])->name('admin.hunters.index');
+    Route::post('/admin/hunters/{id}/approve', [AdminController::class, 'approve'])->name('admin.hunters.approve');
+    Route::delete('/hunters/{hunter}', [AdminController::class, 'adminDestroy'])->name('admin.hunters.destroy');
 });
 
 
 // **プロフィール管理（認証ユーザーのみ）**
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.hunters.index');
+        } else {
+            return redirect()->route('hunters.index');
+        }
+    })->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

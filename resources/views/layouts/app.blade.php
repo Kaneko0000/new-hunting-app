@@ -36,7 +36,7 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="mt-20">
                 @yield('content')  <!-- @section('content') の内容がここに出力される -->
             </main>
 

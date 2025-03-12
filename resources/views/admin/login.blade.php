@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow-lg login-box">
-        <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif;">ハンターログイン</h2>
+        <h2 class="text-center mb-4" style="font-family: 'Poppins', sans-serif;">管理者ログイン</h2>
 
-        <form action="{{ route('hunters.login') }}" method="POST">
+        <form action="{{ route('admin.login') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <label class="form-label fw-bold">Email</label>
