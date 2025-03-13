@@ -23,11 +23,14 @@ class HunterAuthController extends Controller
         ]);
     
         Log::info('ログイン試行: ', $credentials);
-        $hunter = \App\Models\Hunter::where('email', $request->email)->first();
+        
+        $hunter = Hunter::where('email', $request->email)->first();
+    
         if (!$hunter) {
             Log::warning('ログイン失敗: ユーザーが見つかりません', ['email' => $request->email]);
             return back()->withErrors(['email' => 'ログイン情報が間違っています。']);
         }
+    
         Log::info('ハンター情報: ', ['hunter' => $hunter]);
     
         if (!Hash::check($request->password, $hunter->password)) {
@@ -37,16 +40,21 @@ class HunterAuthController extends Controller
             ]);
             return back()->withErrors(['email' => 'ログイン情報が間違っています。']);
         }
+    
         Log::info('パスワードチェック成功: ログイン試行');
+    
+        // **🔥 承認されているかチェック**
+        if ($hunter->status !== 'approved') {
+            Log::warning('ログイン拒否: 承認されていないアカウント', ['email' => $request->email]);
+            return back()->withErrors(['status' => 'あなたのアカウントはまだ承認されていません。']);
+        }
     
         // 🔥 `Auth::guard('hunter')` を使用
         if (Auth::guard('hunter')->attempt($credentials)) {
             $request->session()->regenerate();
             Log::info('ログイン成功: ユーザーID=' . auth()->id());
     
-            return auth()->user()->role === 'admin'
-                ? redirect()->route('admin.dashboard')
-                : redirect()->route('hunters.index');
+            return redirect()->route('hunters.dashboard'); // ログイン後はハンターダッシュボードへ
         }
     
         Log::warning('ログイン失敗: ', ['email' => $request->email]);
@@ -55,6 +63,7 @@ class HunterAuthController extends Controller
             'email' => 'ログイン情報が間違っています。',
         ]);
     }
+    
     
     
 

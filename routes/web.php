@@ -5,6 +5,8 @@ use App\Http\Controllers\HunterAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HunterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HunterLogController;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +18,9 @@ Route::get('/', function () {
 // **ハンター専用ルート**
 Route::middleware(['auth:hunter'])->prefix('hunters')->group(function () {
     Route::get('/dashboard', [HunterController::class, 'dashboard'])->name('hunters.dashboard');
-    Route::get('/', [HunterController::class, 'index'])->name('hunters.index');
+    Route::get('/log', [HunterController::class, 'index'])->name('hunters.log');
+    Route::post('/logs/create', [HunterLogController::class, 'create'])->name('hunters.logs.create'); //記録フォーム作成
+    Route::post('/logs', [HunterLogController::class, 'store'])->name('hunters.logs.store'); // 記録保存
 });
 
 // **管理者認証関連**

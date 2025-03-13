@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hunter;
+use App\Models\License;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewHunterNotification;
@@ -35,6 +36,7 @@ class AdminController extends Controller
     
         $hunters = $query->get();
         $prefectures = config('prefectures');
+        $licenses = License::all(); // 🔥 Licenseテーブルのデータを取得
 
 
 

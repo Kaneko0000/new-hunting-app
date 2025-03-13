@@ -15,6 +15,12 @@
                 <label class="form-label fw-bold">パスワード</label>
                 <input type="password" name="password" class="form-control rounded-pill" required>
             </div>
+            @if ($errors->has('status'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('status') }}
+                </div>
+            @endif
+
             <button type="submit" class="btn btn-primary w-100 rounded-pill">ログイン</button>
         </form>
 

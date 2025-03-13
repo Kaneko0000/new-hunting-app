@@ -27,11 +27,10 @@ class HunterController extends Controller
         }
     
         $hunters = $query->get();
-
         // ユーザーが管理者であるかどうかを判定
         $isAdmin = request()->is('admin/*');
     
-        return view('hunters.index', compact('hunters', 'prefectures', 'isAdmin'));
+        return view('hunters.log', compact('hunters', 'prefectures', 'isAdmin'));
     }
 
     public function create() {
