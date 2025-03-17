@@ -60,58 +60,108 @@ document.addEventListener("DOMContentLoaded", function() {
 mapboxgl.accessToken = 'pk.eyJ1IjoibmFva2lrYW5la28iLCJhIjoiY204Y2wzcWlpMWV3NTJpcWEwaGJwbTloNyJ9.IecMyLEpO8Wp5ihVRHfuQQ'; // ← ここに取得したAPIキーを入れる！
 
 document.addEventListener("DOMContentLoaded", function() {
-  if (document.getElementById("log-map")) { // `log-map` のあるページのみ実行
-      var map = new mapboxgl.Map({
-          container: 'log-map',
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: [130.1, 32.5],
-          zoom: 10
-      });
+  console.log("カスタムJSが読み込まれました！");
 
-      var marker = new mapboxgl.Marker({ draggable: true })
-          .setLngLat([130.1, 32.5])
-          .addTo(map);
+  if (document.getElementById("log-map")) {
+    var logMap = new mapboxgl.Map({
+        container: 'log-map',
+        style: 'mapbox://styles/mapbox/outdoors-v11',
+        center: [130.1, 32.5], // 天草市
+        zoom: 10
+    });
 
-      function updateInputFields(lngLat) {
-          document.getElementById("longitude").value = lngLat.lng;
-          document.getElementById("latitude").value = lngLat.lat;
-      }
+    var marker = new mapboxgl.Marker({ draggable: true })
+        .setLngLat([130.1, 32.5])
+        .addTo(logMap);
 
-      marker.on('dragend', function() {
-          var lngLat = marker.getLngLat();
-          updateInputFields(lngLat);
-      });
+    // 🎯 位置情報を `input` にセットする関数
+    function updateInputFields(lngLat) {
+        document.getElementById("latitude").value = lngLat.lat;
+        document.getElementById("longitude").value = lngLat.lng;
 
-      // 現在位置取得
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              var lngLat = [position.coords.longitude, position.coords.latitude];
-              map.setCenter(lngLat);
-              marker.setLngLat(lngLat);
-              updateInputFields({ lng: lngLat[0], lat: lngLat[1] });
-          });
-      }
-      var marker = new mapboxgl.Marker({
-        draggable: true,
-        scale: 1.1 // ← マーカーを1.1倍に
-      })
-      .setLngLat([130.1, 32.5])
-      .addTo(map);
+        // 🌍 逆ジオコーディング（座標 → 住所）
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?language=ja&access_token=${mapboxgl.accessToken}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.features.length > 0) {
+                    document.getElementById("location").value = data.features[0].place_name; // 住所をセット
+                }
+            })
+            .catch(error => console.error("逆ジオコーディングエラー:", error));
+    }
 
-      // 現在地取得ボタンを追加
-      var geolocateControl = new mapboxgl.GeolocateControl({
+    // 🎯 マーカーを動かしたときの処理
+    marker.on('dragend', function() {
+        var lngLat = marker.getLngLat();
+        updateInputFields(lngLat);
+    });
+
+    // 🎯 初回ページ表示時に現在位置を取得（ユーザー許可時）
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lngLat = [position.coords.longitude, position.coords.latitude];
+                logMap.setCenter(lngLat);
+                marker.setLngLat(lngLat);
+                updateInputFields({ lat: lngLat[1], lng: lngLat[0] }); // 🌟 修正ポイント
+            },
+            function(error) {
+                console.error("位置情報取得エラー:", error);
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+    }
+
+    // 🎯 現在地取得ボタンを追加
+    var geolocateControl = new mapboxgl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
         trackUserLocation: true,
         showUserHeading: true
+    });
+
+    logMap.addControl(geolocateControl, 'top-right');
+  }
+
+  // 🗺 `/hunters/dashboard` のマップ
+  if (document.getElementById("hunter-map")) {
+      var hunterMap = new mapboxgl.Map({
+          container: 'hunter-map',
+          style: 'mapbox://styles/mapbox/outdoors-v11',
+          center: [130.1, 32.5], // 初期位置: 天草
+          zoom: 10
       });
 
-      map.addControl(geolocateControl, 'top-right');
+      // LaravelのAPIから捕獲データを取得し、マーカーを追加
+      fetch('/api/hunter-logs')
+          .then(response => response.json())
+          .then(data => {
+              data.forEach(log => {
+                  new mapboxgl.Marker()
+                      .setLngLat([log.longitude, log.latitude])
+                      .setPopup(new mapboxgl.Popup().setText(`${log.animal} - ${log.date}`))
+                      .addTo(hunterMap);
+              });
+          });
 
-      // スマホでも地図を操作しやすくする
-      map.touchZoomRotate.enable();
-      map.scrollZoom.disable(); // PCではスクロール無効
+      // スクロール操作の調整
+      hunterMap.scrollZoom.disable(); // PCではスクロール無効
       if (window.innerWidth < 768) {
-          map.scrollZoom.enable(); // モバイルならスクロール有効
+          hunterMap.scrollZoom.enable(); // モバイルならスクロール有効
       }
   }
+  function updateInputFields(lngLat) {
+    document.getElementById("latitude").value = lngLat.lat;
+    document.getElementById("longitude").value = lngLat.lng;
+
+    // Mapbox Geocoding API で住所を取得
+    fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?access_token=YOUR_MAPBOX_ACCESS_TOKEN`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.features.length > 0) {
+                document.getElementById("location").value = data.features[0].place_name; // 住所をセット
+            }
+        })
+        .catch(error => console.error("逆ジオコーディングエラー:", error));
+  } 
+
 });

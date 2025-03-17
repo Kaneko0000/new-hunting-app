@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body">
                 <h2>捕獲ログ</h2>
-                <a href="{{ route('hunters.log') }}" class="btn btn-secondary">ログを見る</a>
+                <a href="{{ route('hunters.log') }}" class="btn btn-secondary">捕獲！！</a>
             </div>
         </div>
 

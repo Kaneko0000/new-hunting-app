@@ -26,8 +26,8 @@
 
         <!-- 📍 場所 -->
         <div class="form-group">
-            <label for="location">捕獲場所</label>
-            <input type="text" id="location" name="location" class="form-control" placeholder="例: 熊本県天草市" required>
+            <label for="location">捕獲場所（自動入力）</label>
+            <input type="text" id="location" name="location" class="form-control" readonly>
         </div>
 
         <div id="log-map" style="width: 100%; height: 400px;"></div>
