@@ -9,18 +9,20 @@ class HunterLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'hunter_id',  // ハンターのID
-        'date',       // 記録日
-        'location',   // 場所
-        'species',    // 捕獲した動物の種類
-        'weight',     // 重量
-        'notes',      // メモ
-    ];
+    protected $fillable = ['hunter_id', 'animal_id', 'weather_id', 'latitude', 'longitude', 'capture_date', 'comments'];
 
-    // ハンターとのリレーション
     public function hunter()
     {
         return $this->belongsTo(Hunter::class);
+    }
+
+    public function animal()
+    {
+        return $this->belongsTo(Animal::class);
+    }
+
+    public function weather()
+    {
+        return $this->belongsTo(WeatherCondition::class);
     }
 }

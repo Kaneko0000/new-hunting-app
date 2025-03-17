@@ -18,6 +18,12 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('region'); // ハンターの活動地域
             $table->text('notes')->nullable(); // メモ
+            $table->string('password')->nullable(); // パスワードカラムを追加
+            $table->string('license_type')->nullable(); // ✅ `after` を削除
+            $table->string('license_image')->nullable(); // ✅ `after` を削除
+            $table->date('license_expiry')->nullable(); // ✅ `after` を削除
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('role')->default('hunter');
             $table->timestamps();
         });
     }

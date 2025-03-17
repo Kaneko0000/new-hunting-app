@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hunters', function (Blueprint $table) {
-            $table->string('password')->nullable(); // パスワードカラムを追加
+        Schema::create('weather_conditions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); //天気名
+            $table->string('icon')->nullable(); //画像
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('hunters', function (Blueprint $table) {
-            $table->dropColumn('password');
-        });
+        Schema::dropIfExists('weather_conditions');
     }
 };

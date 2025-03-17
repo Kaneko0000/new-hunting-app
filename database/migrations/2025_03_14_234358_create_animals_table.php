@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hunters', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+        Schema::create('animals', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // 動物名
+            $table->string('icon')->nullable(); // アイコン（画像）
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('hunters', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        Schema::dropIfExists('animals');
     }
 };
