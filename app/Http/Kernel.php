@@ -76,5 +76,6 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'role' => \App\Http\Middleware\RoleMiddleware::class, // ここで `role` ミドルウェアを登録
+        'check.terms' => \App\Http\Middleware\CheckTerms::class,
     ];
 }

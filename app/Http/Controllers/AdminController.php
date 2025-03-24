@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Hunter;
 use App\Models\License;
+use App\Models\Article;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewHunterNotification;
@@ -15,7 +16,9 @@ class AdminController extends Controller
     public function dashboard()
     {
         $hunters = Hunter::all();
-        return view('admin.dashboard', compact('hunters'));
+        // 記事一覧を取得
+        $articles = Article::latest()->take(10)->get(); // 最新10件を取得
+        return view('admin.dashboard', compact('hunters', 'articles'));
     }
 
     public function adminIndex(Request $request)

@@ -54,6 +54,7 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 // ✅ **管理者専用ルート**
 Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/articles', [ArticleController::class, 'store'])->name('admin.articles.store');
     Route::get('/hunters', [AdminController::class, 'adminIndex'])->name('admin.hunters.index');
     Route::post('/hunters/{id}/approve', [AdminController::class, 'approve'])->name('admin.hunters.approve');
     Route::delete('/hunters/{hunter}', [AdminController::class, 'adminDestroy'])->name('admin.hunters.destroy');
