@@ -25,7 +25,8 @@ class AdminController extends Controller
     {
         Log::info('🔥 検索クエリ: ', $request->all());
 
-        $query = Hunter::query();
+        // $query = Hunter::query();
+        $query = Hunter::with('licenses'); // 🔥 ライセンスをロード
     
         // 名前で検索
         if ($request->has('name') && !empty($request->name)) {

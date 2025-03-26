@@ -13,7 +13,7 @@ class Hunter extends Authenticatable
     use HasFactory, Notifiable; // 🔥 Notifiable はメール通知機能用（必要なら追加）
 
     protected $table = 'hunters'; // 明示的にテーブル名を指定
-    protected $fillable = ['name', 'email', 'phone', 'region', 'password', 'license_image', 'license_expiry'];
+    protected $fillable = ['name', 'email', 'phone', 'region', 'password', 'license_image', 'license_expiry', 'terms_accepted', 'privacy_accepted'];
 
     protected $hidden = ['password']; // 🔥 これを修正
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\HunterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HunterLogController;
 use App\Http\Controllers\TermsController;
+use App\Http\Controllers\ArticleController;
 
 use App\Http\Middleware\CheckTerms;
 

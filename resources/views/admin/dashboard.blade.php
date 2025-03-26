@@ -3,12 +3,18 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="dashboard-title">管理者ダッシュボード</h1>
+        <h1 class="kaisei-opti-bold">管理者ダッシュボード</h1>
         <a href="{{ route('admin.hunters.index') }}" class="btn btn-primary">ハンター管理画面へ</a>
     </div>
     <p class="text-muted">ここでハンターの管理やニュース投稿ができます。</p>
 
     <div class="row">
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <!-- 記事投稿フォーム -->
         <div class="col-md-6 mb-4">
             <div class="card shadow">

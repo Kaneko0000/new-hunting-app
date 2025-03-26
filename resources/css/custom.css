@@ -440,3 +440,14 @@ label {
   font-weight: 600;
   color: #333;
 }
+.kaisei-opti-regular {
+  font-family: "Kaisei Opti", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.kaisei-opti-bold {
+  font-family: "Kaisei Opti", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 20px;
+}

@@ -90,5 +90,15 @@
 
         <button type="submit" class="btn btn-primary mt-3">同意して進む</button>
     </form>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 </div>
 @endsection
