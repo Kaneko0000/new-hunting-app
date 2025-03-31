@@ -21,7 +21,8 @@
   ヒーローセクションのスタイル
 ============================= */
 .hero-section {
-  background-image: url('/resources/images/hero.jpg');
+  /* background-image: url('/resources/images/hero.jpg'); */
+  background-image: url('/resources/images/hana.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;

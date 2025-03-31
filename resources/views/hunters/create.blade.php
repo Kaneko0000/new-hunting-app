@@ -53,7 +53,7 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label>狩猟免許の種類:</label>
                     <div class="license-buttons">
                         @foreach($licenses as $license)
@@ -63,6 +63,21 @@
                             </label>
                         @endforeach
                     </div>
+                </div> -->
+                <div class="form-group">
+                    <label>狩猟免許の種類:</label>
+                    <div class="license-buttons">
+                        @foreach($licenses as $license)
+                            <label class="license-option">
+                                <input type="checkbox" name="licenses[]" value="{{ $license->id }}" 
+                                    {{ is_array(old('licenses')) && in_array($license->id, old('licenses')) ? 'checked' : '' }}>
+                                <span>{{ $license->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('licenses')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="form-group">

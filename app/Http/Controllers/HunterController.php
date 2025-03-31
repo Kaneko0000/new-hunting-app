@@ -44,7 +44,6 @@ class HunterController extends Controller
         // フォームからのリクエストデータをログ出力
         Log::info('受け取ったリクエスト:', $request->all());
     
-        // バリデーション（失敗時に即リダイレクト）
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:hunters,email',
@@ -53,6 +52,7 @@ class HunterController extends Controller
             'password' => 'required|min:8|confirmed',
             'license_expiry' => 'nullable|date',
             'license_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'licenses' => 'array', //複数対応
         ]);
     
         // 🔥 バリデーションを通過した場合のみ以下の処理を実行 🔥
@@ -67,16 +67,17 @@ class HunterController extends Controller
             'license_expiry' => $validatedData['license_expiry'] ?? null, // 有効期限を保存
         ]);
     
-        // ここで保存できているかログ確認
-        Log::info('保存後のハンター情報: ', ['hunter' => $hunter]);
-    
         // 🔥 免許画像を保存
         if ($request->hasFile('license_image')) {
             $path = $request->file('license_image')->store('licenses', 'public');
             Log::info('画像パス: ', ['path' => $path]);
-    
-            // `Hunter` に保存
             $hunter->update(['license_image' => $path]);
+        }
+
+        // 🔥 免許情報を中間テーブルに保存
+        if ($request->has('licenses')) {
+            $hunter->licenses()->attach($request->licenses);
+            Log::info('ライセンス情報を登録: ', ['licenses' => $request->licenses]);
         }
     
         try {

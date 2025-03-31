@@ -18,26 +18,27 @@ class HunterLogController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'date' => 'required|date',
+            'capture_date' => 'required|date',
             'time' => 'required',
             'location' => 'required|string|max:255',
-            'animal' => 'required|string',
+            'animal_id' => 'required|integer', // 動物IDに修正
             'count' => 'required|integer|min:1',
-            'weather' => 'nullable|string',
-            'notes' => 'nullable|string',
+            'weather_id' => 'nullable|integer', // 天気IDに修正
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'comments' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // データを保存
         $log = new HunterLog();
         $log->hunter_id = Auth::id(); // ログイン中のハンターのIDを保存
-        $log->date = $validatedData['date'];
-        $log->time = $validatedData['time'];
-        $log->location = $validatedData['location'];
-        $log->animal = $validatedData['animal'];
-        $log->count = $validatedData['count'];
-        $log->weather = $validatedData['weather'] ?? null;
-        $log->notes = $validatedData['notes'] ?? null;
+        $log->capture_date = $validatedData['capture_date'];
+        $log->animal_id = $validatedData['animal_id'];
+        $log->weather_id = $validatedData['weather_id'] ?? null;
+        $log->latitude = $validatedData['latitude'] ?? null;
+        $log->longitude = $validatedData['longitude'] ?? null;
+        $log->comments = $validatedData['comments'] ?? null;
 
         // 画像アップロード
         if ($request->hasFile('photo')) {

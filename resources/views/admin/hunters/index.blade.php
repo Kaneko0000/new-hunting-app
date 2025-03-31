@@ -45,8 +45,30 @@
                     <td>{{ $hunter->region }}</td>
                     <td>
                         @foreach($hunter->licenses as $license)
-                            <span class="badge bg-success">{{ $license->name }}</span><br>
+                            <span class="badge bg-success me-1">{{ $license->name }}</span>
                         @endforeach
+
+                        @if($hunter->license_image)
+                            <!-- サムネイル画像 -->
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $hunter->id }}">
+                                <img src="{{ asset('storage/' . $hunter->license_image) }}" alt="免許画像" style="width: 30px; height: 30px; object-fit: cover;" class="rounded-circle">
+                            </a>
+
+                            <!-- モーダル -->
+                            <div class="modal fade" id="imageModal-{{ $hunter->id }}" tabindex="-1" aria-labelledby="imageModalLabel-{{ $hunter->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- modal-lgで拡大 -->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="imageModalLabel-{{ $hunter->id }}">免許画像</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ asset('storage/' . $hunter->license_image) }}" alt="免許画像" class="img-fluid rounded" style="max-width: 90%; max-height: 80vh;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </td>
                     <td>
                         @if($hunter->status === 'approved')
@@ -65,7 +87,6 @@
                             <button type="submit" class="btn btn-danger btn-sm btn-action">削除</button>
                         </form>
                     </td>
-
                 </tr>
             @endforeach
         </tbody>

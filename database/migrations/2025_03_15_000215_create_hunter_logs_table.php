@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('longitude', 10, 7); // 経度
             $table->date('capture_date'); // 捕獲日
             $table->text('comments')->nullable(); // コメント
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

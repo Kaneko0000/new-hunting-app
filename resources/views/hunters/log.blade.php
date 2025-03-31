@@ -15,10 +15,9 @@
 
         <!-- 📅 捕獲日時 -->
         <div class="mb-3">
-            <label for="date" class="form-label">捕獲日</label>
-            <input type="date" id="date" name="date" class="form-control" required>
+            <label for="capture_date" class="form-label">捕獲日</label>
+            <input type="date" id="capture_date" name="capture_date" class="form-control" required>
         </div>
-
         <div class="mb-3">
             <label for="time" class="form-label">捕獲時間</label>
             <input type="time" id="time" name="time" class="form-control" required>
@@ -37,24 +36,23 @@
 
         <!-- 🐗 捕獲した動物の種類 -->
         <div class="mb-3">
-            <label for="animal" class="form-label">捕獲した動物</label>
+            <label for="animal_id" class="form-label">捕獲した動物</label>
+            <input type="hidden" id="animal_id" name="animal_id">
             <div class="d-flex justify-content-center flex-wrap gap-3">
-                <input type="hidden" id="selectedAnimal" name="animal">
-
                 <!-- 動物リスト -->
                 @php
                     $animals = [
-                        ['name' => 'イノシシ', 'img' => 'boar.webp'],
-                        ['name' => 'シカ', 'img' => 'deer.webp'],
-                        ['name' => 'クマ', 'img' => 'bear.webp'],
-                        ['name' => 'キツネ', 'img' => 'fox.webp'],
-                        ['name' => 'タヌキ', 'img' => 'racoon.webp'],
-                        ['name' => 'その他', 'img' => 'question.webp'],
+                        ['id' => 1, 'name' => 'イノシシ', 'img' => 'boar.webp'],
+                        ['id' => 2, 'name' => 'シカ', 'img' => 'deer.webp'],
+                        ['id' => 3, 'name' => 'クマ', 'img' => 'bear.webp'],
+                        ['id' => 4, 'name' => 'キツネ', 'img' => 'fox.webp'],
+                        ['id' => 5, 'name' => 'タヌキ', 'img' => 'racoon.webp'],
+                        ['id' => 6, 'name' => 'その他', 'img' => 'question.webp'],
                     ];
                 @endphp
 
                 @foreach ($animals as $animal)
-                    <div class="animal-option text-center" data-value="{{ $animal['name'] }}">
+                    <div class="animal-option text-center" data-value="{{ $animal['id'] }}">
                         <img src="/images/{{ $animal['img'] }}" class="animal-icon" alt="{{ $animal['name'] }}">
                         <p class="fw-bold">{{ $animal['name'] }}</p>
                     </div>
@@ -62,54 +60,39 @@
             </div>
         </div>
 
-        <!-- 🔢 捕獲数 -->
-        <div class="form-group">
-            <label for="count">捕獲数</label>
-            <input type="hidden" id="selectedCount" name="count">
-            <div class="count-options">
+        <div class="mb-3">
+            <label for="count" class="form-label">捕獲数</label>
+            <input type="hidden" id="count" name="count">
+            <div class="d-flex justify-content-center flex-wrap gap-2">
                 @for($i = 1; $i <= 8; $i++)
-                    <div class="count-option" data-value="{{ $i }}">
-                        <span>{{ $i }}</span>
+                    <div class="count-option text-center" data-value="{{ $i }}">
+                        <span class="count-number">{{ $i }}</span>
                     </div>
                 @endfor
             </div>
         </div>
 
         <!-- ☀️ 天候 -->
-        <div class="form-group">
-            <label for="weather">天候</label>
-            <div class="weather-options">
-                <input type="hidden" id="selectedWeather" name="weather">
+        <div class="mb-3">
+            <label for="weather_id" class="form-label">天気</label>
+            <input type="hidden" id="weather_id" name="weather_id">
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                @php
+                    $weathers = [
+                        ['id' => 1, 'name' => '晴', 'img' => 'weather1.webp'],
+                        ['id' => 2, 'name' => '曇り', 'img' => 'weather2.webp'],
+                        ['id' => 3, 'name' => '雨', 'img' => 'weather3.webp'],
+                        ['id' => 4, 'name' => '雪', 'img' => 'weather4.webp'],
+                        ['id' => 5, 'name' => '曇り時々雨', 'img' => 'weather5.webp'],
+                    ];
+                @endphp
 
-                <!-- 晴れ -->
-                <div class="weather-option" data-value="晴れ">
-                    <img src="/images/weather1.webp" class="weather-icon" alt="晴れ">
-                    <span>晴れ</span>
-                </div>
-
-                <!-- 曇り -->
-                <div class="weather-option" data-value="曇り">
-                    <img src="/images/weather2.webp" class="weather-icon" alt="曇り">
-                    <span>曇り</span>
-                </div>
-
-                <!-- 雨 -->
-                <div class="weather-option" data-value="雨">
-                    <img src="/images/weather3.webp" class="weather-icon" alt="雨">
-                    <span>雨</span>
-                </div>
-
-                <!-- 雪 -->
-                <div class="weather-option" data-value="雪">
-                    <img src="/images/weather4.webp" class="weather-icon" alt="雪">
-                    <span>雪</span>
-                </div>
-
-                <!-- 曇り時々雨 -->
-                <div class="weather-option" data-value="曇り時々雨">
-                    <img src="/images/weather5.webp" class="weather-icon" alt="曇り時々雨">
-                    <span>曇り時々雨</span>
-                </div>
+                @foreach ($weathers as $weather)
+                    <div class="weather-option text-center" data-value="{{ $weather['id'] }}">
+                        <img src="/images/{{ $weather['img'] }}" class="weather-icon" alt="{{ $weather['name'] }}">
+                        <p class="fw-bold">{{ $weather['name'] }}</p>
+                    </div>
+                @endforeach
             </div>
         </div>
 
