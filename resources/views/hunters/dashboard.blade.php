@@ -70,6 +70,45 @@
                 <h2>狩猟統計</h2>
                 <div id="hunter-map" style="width: 100%; height: 500px;"></div>
             </div>
+            {{-- 狩猟統計セクション --}}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2>狩猟統計</h2>
+
+            <div class="d-flex flex-wrap gap-4 justify-content-center">
+                @php
+                    use App\Models\Animal;
+                    use App\Models\HunterLog;
+
+                    $logs = HunterLog::where('hunter_id', auth()->id())
+                                ->select('animal_id', \DB::raw('count(*) as total'))
+                                ->groupBy('animal_id')
+                                ->get();
+
+                    $animals = [
+                        ['id' => 1, 'name' => 'イノシシ', 'img' => 'boar.webp'],
+                        ['id' => 2, 'name' => 'シカ', 'img' => 'deer.webp'],
+                        ['id' => 3, 'name' => 'クマ', 'img' => 'bear.webp'],
+                        ['id' => 4, 'name' => 'キツネ', 'img' => 'fox.webp'],
+                        ['id' => 5, 'name' => 'タヌキ', 'img' => 'racoon.webp'],
+                        ['id' => 6, 'name' => 'その他', 'img' => 'question.webp'],
+                    ];
+                @endphp
+
+                @foreach ($logs as $log)
+                    @php
+                        $animal = collect($animals)->firstWhere('id', $log->animal_id);
+                    @endphp
+                    @if ($animal)
+                        <div class="text-center">
+                            <img src="/images/{{ $animal['img'] }}" alt="{{ $animal['name'] }}" style="width: 80px; height: 80px; object-fit: contain;">
+                            <p class="mt-2 fw-bold">{{ $animal['name'] }}: {{ $log->total }} 頭</p>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+    </div>
         </div>
 
         <div class="card">
@@ -98,3 +137,7 @@
         </div>
     </div>
 @endsection
+
+<script>
+    const hunterLogs = @json($logs);
+</script>

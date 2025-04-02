@@ -100,7 +100,8 @@
         <!-- 📝 メモ -->
         <div class="mb-3">
             <label for="notes" class="form-label">メモ (任意)</label>
-            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="備考があれば記入"></textarea>
+            <!-- <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="備考があれば記入"></textarea> -->
+            <textarea id="comments" name="comments" class="form-control" rows="3" placeholder="備考があれば記入">></textarea>
         </div>
 
         <!-- 📸 写真アップロード -->

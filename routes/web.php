@@ -44,6 +44,10 @@ Route::middleware(['auth:hunter'])->prefix('hunters')->group(function () {
         // ✅ 狩猟記録
         Route::post('/logs/create', [HunterLogController::class, 'create'])->name('hunters.logs.create');
         Route::post('/logs', [HunterLogController::class, 'store'])->name('hunters.logs.store');
+        
+        Route::get('/api/hunter-logs', [HunterController::class, 'apiHunterLogs'])
+        ->middleware('auth')
+        ->name('api.hunter.logs');
     });
 });
 

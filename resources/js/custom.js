@@ -74,23 +74,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .setLngLat([130.1, 32.5])
             .addTo(logMap);
 
-        // 🎯 位置情報を `input` にセットする関数
-        function updateInputFields(lngLat) {
-            document.getElementById("latitude").value = lngLat.lat;
-            document.getElementById("longitude").value = lngLat.lng;
-
-            // 🌍 逆ジオコーディング（座標 → 住所）
-            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?language=ja&access_token=${mapboxgl.accessToken}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.features.length > 0) {
-                        let fullPlace = data.features[0].place_name;
-                        let trimmedPlace = fullPlace.replace(/^日本\s?/, ''); // "日本" を先頭から削除
-                        document.getElementById("location").value = trimmedPlace;
-                    }
-                })
-                .catch(error => console.error("逆ジオコーディングエラー:", error));
-        }
 
         // 🎯 マーカーを動かしたときの処理
         marker.on('dragend', function() {
@@ -123,6 +106,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
         logMap.addControl(geolocateControl, 'top-right');
     }
+            // 🎯 位置情報を `input` にセットする関数
+            function updateInputFields(lngLat) {
+                document.getElementById("latitude").value = lngLat.lat;
+                document.getElementById("longitude").value = lngLat.lng;
+    
+                // 🌍 逆ジオコーディング（座標 → 住所）
+                fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?language=ja&access_token=${mapboxgl.accessToken}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.features.length > 0) {
+                            let fullPlace = data.features[0].place_name;
+                            let trimmedPlace = fullPlace.replace(/^日本\s?/, ''); // "日本" を先頭から削除
+                            document.getElementById("location").value = trimmedPlace;
+                        }
+                    })
+                    .catch(error => console.error("逆ジオコーディングエラー:", error));
+            }
+    
 
     // 🗺 `/hunters/dashboard` のマップ
     if (document.getElementById("hunter-map")) {
@@ -133,17 +134,28 @@ document.addEventListener("DOMContentLoaded", function() {
             zoom: 10
         });
 
-        // LaravelのAPIから捕獲データを取得し、マーカーを追加
-        fetch('/api/hunter-logs')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(log => {
-                    new mapboxgl.Marker()
-                        .setLngLat([log.longitude, log.latitude])
-                        .setPopup(new mapboxgl.Popup().setText(`${log.animal} - ${log.date}`))
-                        .addTo(hunterMap);
-                });
+        // // LaravelのAPIから捕獲データを取得し、マーカーを追加
+        // fetch('/hunters/api/hunter-logs')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log("取得データ:", data);
+        //         data.forEach(log => {
+        //             new mapboxgl.Marker({ color: 'red' }) // ← 🔴赤マーカー指定を追加
+        //                 .setLngLat([log.longitude, log.latitude])
+        //                 .setPopup(new mapboxgl.Popup().setText(`${log.animal?.name ?? '不明'} - ${log.capture_date ?? '日付不明'}`))
+        //                 .addTo(hunterMap);
+        //         });
+        //     });
+        
+        // ✅ サーバーから埋め込まれた hunterLogs を使う！
+        if (typeof hunterLogs !== 'undefined' && hunterLogs.length > 0) {
+            hunterLogs.forEach(log => {
+                new mapboxgl.Marker({ color: 'red' })
+                    .setLngLat([log.longitude, log.latitude])
+                    .setPopup(new mapboxgl.Popup().setText(`${log.animal?.name ?? '不明'} - ${log.capture_date ?? '日付不明'}`))
+                    .addTo(hunterMap);
             });
+        }
 
         // スクロール操作の調整
         hunterMap.scrollZoom.disable(); // PCではスクロール無効
@@ -151,13 +163,5 @@ document.addEventListener("DOMContentLoaded", function() {
             hunterMap.scrollZoom.enable(); // モバイルならスクロール有効
         }
     }
-
-//   function showSection(section) {
-//     const sections = ['capture', 'board', 'map', 'message'];
-//     sections.forEach(id => {
-//         document.getElementById(`section-${id}`).classList.add('d-none');
-//     });
-//     document.getElementById(`section-${section}`).classList.remove('d-none');
-// }
 
 });

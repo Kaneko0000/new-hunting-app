@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             AnimalSeeder::class,    // ✅ 動物データ
             WeatherConditionSeeder::class, // ✅ 天気データ
             ArticleSeeder::class,  //✅ 管理者記事投稿
+            HunterSeeder::class,
+            HunterLogSeeder::class,
         ]);
     }
 }

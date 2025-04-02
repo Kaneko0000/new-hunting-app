@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hunter;
+use App\Models\HunterLog;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\HunterRequest;
@@ -131,7 +132,23 @@ class HunterController extends Controller
     public function dashboard()
     {
         $hunter = auth()->user();
-        return view('hunters.dashboard', compact('hunter'));
+
+        $logs = HunterLog::where('hunter_id', $hunter->id)
+        ->select('latitude', 'longitude', 'capture_date')
+        ->with('animal:id,name') // 動物名も取得
+        ->get();
+
+        return view('hunters.dashboard', compact('hunter', 'logs'));
+    }
+    public function apiHunterLogs()
+    {
+        // 認証ユーザーのログを全件取得（動物の名前も一緒に取得）
+        $logs = HunterLog::where('hunter_id', auth()->id())
+                    ->with('animal:id,name')
+                    ->select('id', 'animal_id', 'latitude', 'longitude', 'capture_date')
+                    ->get();
+
+        return response()->json($logs);
     }
 
 }
