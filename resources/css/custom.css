@@ -452,3 +452,42 @@ label {
   font-style: normal;
   font-size: 20px;
 }
+
+
+/* .blink-marker {
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.6);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+} */
+
+.blink-marker {
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  animation: pulseSize 1.5s infinite;
+  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.6);
+  position: absolute;
+}
+@keyframes pulseSize {
+  0%, 100% {
+    width: 2px;
+    height: 2px;
+    opacity: 1;
+  }
+  50% {
+    width: 14px;
+    height: 14px;
+    opacity: 0.3;
+  }
+}
+
+

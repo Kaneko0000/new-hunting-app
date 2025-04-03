@@ -150,8 +150,14 @@ document.addEventListener("DOMContentLoaded", function() {
         // ✅ サーバーから埋め込まれた hunterLogs を使う！
         if (typeof hunterLogs !== 'undefined' && hunterLogs.length > 0) {
             hunterLogs.forEach(log => {
-                new mapboxgl.Marker({ color: 'red' })
+                // HTML要素を作成
+                const el = document.createElement('div');
+                el.className = 'blink-marker';
+
+                // カスタムHTMLマーカーをMapboxに追加
+                new mapboxgl.Marker(el)
                     .setLngLat([log.longitude, log.latitude])
+                    // .setLngLat([parseFloat(log.longitude), parseFloat(log.latitude)])
                     .setPopup(new mapboxgl.Popup().setText(`${log.animal?.name ?? '不明'} - ${log.capture_date ?? '日付不明'}`))
                     .addTo(hunterMap);
             });

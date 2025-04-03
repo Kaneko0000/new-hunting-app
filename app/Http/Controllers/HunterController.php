@@ -133,9 +133,10 @@ class HunterController extends Controller
     {
         $hunter = auth()->user();
 
+        // 地図マーカー用ログデータ（緯度経度、日付、動物名）
         $logs = HunterLog::where('hunter_id', $hunter->id)
-        ->select('latitude', 'longitude', 'capture_date')
-        ->with('animal:id,name') // 動物名も取得
+        ->with('animal:id,name')
+        ->select('id', 'animal_id', 'latitude', 'longitude', 'capture_date')
         ->get();
 
         return view('hunters.dashboard', compact('hunter', 'logs'));

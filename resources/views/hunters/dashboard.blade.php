@@ -80,7 +80,7 @@
                     use App\Models\Animal;
                     use App\Models\HunterLog;
 
-                    $logs = HunterLog::where('hunter_id', auth()->id())
+                    $logCounts = HunterLog::where('hunter_id', auth()->id())
                                 ->select('animal_id', \DB::raw('count(*) as total'))
                                 ->groupBy('animal_id')
                                 ->get();
@@ -140,4 +140,5 @@
 
 <script>
     const hunterLogs = @json($logs);
+    console.log("📍hunterLogs:", hunterLogs);
 </script>
