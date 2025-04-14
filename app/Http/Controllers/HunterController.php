@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Hunter;
 use App\Models\HunterLog;
+use App\Models\Article;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\HunterRequest;
@@ -139,7 +140,10 @@ class HunterController extends Controller
         ->select('id', 'animal_id', 'latitude', 'longitude', 'capture_date')
         ->get();
 
-        return view('hunters.dashboard', compact('hunter', 'logs'));
+        // 🔥 ここで記事を取得
+        $articles = Article::latest()->take(5)->get();
+
+        return view('hunters.dashboard', compact('hunter', 'logs', 'articles'));
     }
     public function apiHunterLogs()
     {
