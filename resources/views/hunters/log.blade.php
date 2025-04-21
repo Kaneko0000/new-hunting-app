@@ -64,7 +64,7 @@
             <label for="count" class="form-label">捕獲数</label>
             <input type="hidden" id="count" name="count">
             <div class="d-flex justify-content-center flex-wrap gap-2">
-                @for($i = 1; $i <= 8; $i++)
+                @for($i = 1; $i <= 6; $i++)
                     <div class="count-option text-center" data-value="{{ $i }}">
                         <span class="count-number">{{ $i }}</span>
                     </div>
@@ -83,7 +83,7 @@
                         ['id' => 2, 'name' => '曇り', 'img' => 'weather2.webp'],
                         ['id' => 3, 'name' => '雨', 'img' => 'weather3.webp'],
                         ['id' => 4, 'name' => '雪', 'img' => 'weather4.webp'],
-                        ['id' => 5, 'name' => '曇り時々雨', 'img' => 'weather5.webp'],
+                        ['id' => 5, 'name' => '曇雨', 'img' => 'weather5.webp'],
                     ];
                 @endphp
 

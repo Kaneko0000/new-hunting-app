@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("log-map")) {
         var logMap = new mapboxgl.Map({
             container: 'log-map',
-            style: 'mapbox://styles/mapbox/outdoors-v11',
+            // style: 'mapbox://styles/mapbox/outdoors-v11',
+            // style: 'mapbox://styles/mapbox/streets-v11?language=ja',
+            style: 'https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json',
             center: [130.1, 32.5], // 天草市
             zoom: 10
         });
@@ -129,23 +131,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("hunter-map")) {
         var hunterMap = new mapboxgl.Map({
             container: 'hunter-map',
-            style: 'mapbox://styles/mapbox/outdoors-v11',
+            // style: 'mapbox://styles/mapbox/outdoors-v11',
+            // style: 'mapbox://styles/mapbox/streets-v11?language=ja',
+            style: 'https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json',
+
             center: [130.1, 32.5], // 初期位置: 天草
             zoom: 10
         });
-
-        // // LaravelのAPIから捕獲データを取得し、マーカーを追加
-        // fetch('/hunters/api/hunter-logs')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log("取得データ:", data);
-        //         data.forEach(log => {
-        //             new mapboxgl.Marker({ color: 'red' }) // ← 🔴赤マーカー指定を追加
-        //                 .setLngLat([log.longitude, log.latitude])
-        //                 .setPopup(new mapboxgl.Popup().setText(`${log.animal?.name ?? '不明'} - ${log.capture_date ?? '日付不明'}`))
-        //                 .addTo(hunterMap);
-        //         });
-        //     });
         
         // ✅ サーバーから埋め込まれた hunterLogs を使う！
         if (typeof hunterLogs !== 'undefined' && hunterLogs.length > 0) {
@@ -169,5 +161,19 @@ document.addEventListener("DOMContentLoaded", function() {
             hunterMap.scrollZoom.enable(); // モバイルならスクロール有効
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const btn = document.querySelector('.catch-btn');
+        btn.addEventListener('click', () => {
+            btn.animate([
+                { transform: 'scale(1)', offset: 0 },
+                { transform: 'scale(1.2)', offset: 0.5 },
+                { transform: 'scale(1)', offset: 1 }
+            ], {
+                duration: 300,
+                easing: 'ease-out'
+            });
+        });
+    });
 
 });

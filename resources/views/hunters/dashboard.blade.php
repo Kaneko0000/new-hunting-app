@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">狩野ダッシュボード</h1>
+        <h1 class="mb-4">狩猟ダッシュボード</h1>
 
-        {{-- フラッシュメッセージの表示 --}}
+        {{-- フラッシュメッセージ --}}
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                 {{ session('success') }}
@@ -12,10 +12,9 @@
             </div>
         @endif
 
-        {{-- 狩野統計 (捕獲頭数カード) --}}
         <div class="card mb-4">
             <div class="card-header bg-success text-white">
-                <h2 class="mb-0">🦅 狩野統計</h2>
+                <h2 class="mb-0">🦅 狩猟記録</h2>
             </div>
             <div class="card-body">
                 <div class="row text-center">
@@ -52,6 +51,13 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <h2>捕獲ログ</h2>
+                <a href="{{ route('hunters.log') }}" class="catch-btn">🐗 捕まえたー！</a>
+            </div>
+        </div>
+        <img src="/images/hokaku.png" id="stampEffect" class="stamp-effect" alt="">
 
         {{-- 狩野マップ --}}
         <div class="card mb-4">
@@ -90,9 +96,30 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 <script>
     const hunterLogs = @json($logs);
     console.log("\ud83d\udccd hunterLogs:", hunterLogs);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.querySelector('.catch-btn');
+        const stamp = document.getElementById('stampEffect');
+
+        if (btn && stamp) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault(); // 遷移を一旦止める
+
+                // スタンプ演出
+                stamp.classList.add('active');
+
+                // 数秒後に元の画面に戻す＆ページ遷移
+                setTimeout(() => {
+                    stamp.classList.remove('active');
+                    window.location.href = btn.href;
+                }, 1000); // 1秒間演出してから遷移
+            });
+        }
+    });
 </script>
