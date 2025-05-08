@@ -19,26 +19,31 @@ class HunterLogController extends Controller
     {
         $validatedData = $request->validate([
             'capture_date' => 'required|date',
-            'time' => 'required',
+            'capture_time' => 'required',
             'location' => 'required|string|max:255',
-            'animal_id' => 'required|integer', // 動物IDに修正
+            'animal_id' => 'required|integer',
             'count' => 'required|integer|min:1',
-            'weather_id' => 'nullable|integer', // 天気IDに修正
+            'weather_id' => 'nullable|integer',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'comments' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'hunting_method_id' => 'required|integer',
         ]);
-
-        // データを保存
+        
+        // 🛠 モデルへセット
         $log = new HunterLog();
-        $log->hunter_id = Auth::id(); // ログイン中のハンターのIDを保存
+        $log->hunter_id = Auth::id();
         $log->capture_date = $validatedData['capture_date'];
+        $log->capture_time = $validatedData['capture_time'];
         $log->animal_id = $validatedData['animal_id'];
+        $log->count = $validatedData['count'];
         $log->weather_id = $validatedData['weather_id'] ?? null;
         $log->latitude = $validatedData['latitude'] ?? null;
         $log->longitude = $validatedData['longitude'] ?? null;
         $log->comments = $validatedData['comments'] ?? null;
+        $log->hunting_method_id = $validatedData['hunting_method_id'] ?? null;
+        
 
         // 画像アップロード
         if ($request->hasFile('photo')) {

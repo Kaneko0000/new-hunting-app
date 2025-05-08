@@ -19,8 +19,8 @@
             <input type="date" id="capture_date" name="capture_date" class="form-control" required>
         </div>
         <div class="mb-3">
-            <label for="time" class="form-label">捕獲時間</label>
-            <input type="time" id="time" name="time" class="form-control" required>
+            <label for="capture_time" class="form-label">捕獲時間</label>
+            <input type="time" id="capture_time" name="capture_time" class="form-control" required>
         </div>
 
         <!-- 📍 場所 -->
@@ -33,6 +33,29 @@
 
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
+
+        <!-- 🏹 狩猟方法（画像選択式） -->
+        <div class="mb-3">
+            <label for="hunting_method_id" class="form-label">狩猟方法</label>
+            <input type="hidden" id="hunting_method_id" name="hunting_method_id" required>
+
+            <div class="d-flex justify-content-center flex-wrap gap-3 hunting-method-options">
+                @php
+                    $methods = [
+                        ['id' => 1, 'name' => '箱罠', 'icon' => 'hunting_method1.png'],
+                        ['id' => 2, 'name' => 'くくり罠', 'icon' => 'hunting_method2.png'],
+                        ['id' => 3, 'name' => '巻狩り', 'icon' => 'hunting_method3.png'],
+                    ];
+                @endphp
+
+                @foreach ($methods as $method)
+                    <div class="hunting-method-option text-center" data-value="{{ $method['id'] }}">
+                        <img src="/images/{{ $method['icon'] }}" class="hunting-method-icon" alt="{{ $method['name'] }}" style="width:100px; height:auto;">
+                        <p class="fw-bold">{{ $method['name'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
 
         <!-- 🐗 捕獲した動物の種類 -->
         <div class="mb-3">

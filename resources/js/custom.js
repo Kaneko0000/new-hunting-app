@@ -177,3 +177,20 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 狩猟方法の画像選択
+    document.querySelectorAll(".hunting-method-option").forEach(option => {
+        option.addEventListener("click", function() {
+            // 他の選択肢の選択解除
+            document.querySelectorAll(".hunting-method-option").forEach(opt => opt.classList.remove("selected"));
+
+            // クリックされた選択肢をハイライト
+            this.classList.add("selected");
+
+            // 選択した狩猟方法名をフォームにセット
+            const methodId = parseInt(this.dataset.value, 10);
+            document.getElementById("hunting_method_id").value = methodId;
+        });
+    });
+});

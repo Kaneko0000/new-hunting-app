@@ -16,11 +16,17 @@ return new class extends Migration
             $table->foreignId('hunter_id')->constrained('hunters')->onDelete('cascade');
             $table->foreignId('animal_id')->constrained('animals')->onDelete('cascade');
             $table->foreignId('weather_id')->constrained('weather_conditions')->onDelete('cascade');
+            $table->foreignId('hunting_method_id')->constrained('hunting_methods')->onDelete('cascade');
+
             $table->decimal('latitude', 10, 7); // 緯度
             $table->decimal('longitude', 10, 7); // 経度
+
             $table->date('capture_date'); // 捕獲日
+            $table->time('capture_time'); // 捕獲時間
+
+            $table->text('count')->nullable(); // 捕獲数
             $table->text('comments')->nullable(); // コメント
-            $table->string('photo')->nullable();
+            $table->string('photo')->nullable(); //画像パス
             $table->timestamps();
         });
     }

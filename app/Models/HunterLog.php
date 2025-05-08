@@ -9,7 +9,7 @@ class HunterLog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hunter_id', 'animal_id', 'weather_id', 'latitude', 'longitude', 'capture_date', 'comments'];
+    protected $fillable = ['hunter_id', 'animal_id', 'weather_id', 'latitude', 'longitude', 'capture_date', 'comments', 'photo', 'count', 'hunting_method_id'];
 
     public function hunter()
     {
@@ -24,5 +24,10 @@ class HunterLog extends Model
     public function weather()
     {
         return $this->belongsTo(WeatherCondition::class);
+    }
+
+    public function huntingMethod()
+    {
+        return $this->belongsTo(HuntingMethod::class);
     }
 }

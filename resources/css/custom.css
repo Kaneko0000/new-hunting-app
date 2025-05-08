@@ -557,5 +557,18 @@ label {
 }
 
 
+.hunting-method-option {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 5px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hunting-method-option.selected {
+  border: 2px solid #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+  transform: scale(1.05);
+}
 
 
