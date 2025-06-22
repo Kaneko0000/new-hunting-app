@@ -12,11 +12,13 @@ class HunterLogController extends Controller
 {
     public function create()
     {
-        return view('hunters.log'); // `log.blade.php` を表示
+        $mapboxToken = config('services.mapbox.token');
+        return view('hunters.log', compact('mapboxToken')); // `log.blade.php` を表示
     }
 
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'capture_date' => 'required|date',
             'capture_time' => 'required',
@@ -30,8 +32,15 @@ class HunterLogController extends Controller
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'hunting_method_id' => 'required|integer',
         ]);
+
+        // 🆕 位置情報（住所文字列）から都道府県を抽出する処理を追加
+        $fullAddress = $validatedData['location']; // 例: 熊本県天草市五和町...
+        $prefecture = null;
+
+        if (preg_match('/^(.{2,3}県|.{2,3}都|.{2,3}府|.{2,3}道)/u', $fullAddress, $matches)) {
+            $prefecture = $matches[1]; // 熊本県など
+        }
         
-        // 🛠 モデルへセット
         $log = new HunterLog();
         $log->hunter_id = Auth::id();
         $log->capture_date = $validatedData['capture_date'];
@@ -41,8 +50,11 @@ class HunterLogController extends Controller
         $log->weather_id = $validatedData['weather_id'] ?? null;
         $log->latitude = $validatedData['latitude'] ?? null;
         $log->longitude = $validatedData['longitude'] ?? null;
-        $log->comments = $validatedData['comments'] ?? null;
         $log->hunting_method_id = $validatedData['hunting_method_id'] ?? null;
+        $log->comments = $validatedData['comments'] ?? null;
+        
+        $log->address = $fullAddress;     // 🆕 住所全体
+        $log->prefecture = $prefecture;   // 🆕 都道府県だけ
         
 
         // 画像アップロード

@@ -23,7 +23,7 @@
                         use App\Models\HunterLog;
 
                         $logCounts = HunterLog::where('hunter_id', auth()->id())
-                                    ->select('animal_id', \DB::raw('count(*) as total'))
+                                    ->select('animal_id', \DB::raw('SUM(count) as total'))
                                     ->groupBy('animal_id')
                                     ->get();
 
@@ -51,10 +51,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">📅 捕獲カレンダー</h2>
+            </div>
+            <div class="card-body">
+                <div id="hunter-calendar"></div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <h2>捕獲ログ</h2>
-                <a href="{{ route('hunters.log') }}" class="catch-btn">🐗 捕まえたー！</a>
+                <div id="capture-flash" style="display:none;">捕獲ー！</div>
+                <a href="javascript:void(0)" id="capture-button" class="catch-btn" data-url="{{ route('hunters.log') }}">🐗 捕まえたー！</a>
             </div>
         </div>
         <img src="/images/hokaku.png" id="stampEffect" class="stamp-effect" alt="">
@@ -96,30 +107,16 @@
             </div>
         </div>
     </div>
-
 @endsection
 
-<script>
-    const hunterLogs = @json($logs);
-    console.log("\ud83d\udccd hunterLogs:", hunterLogs);
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const btn = document.querySelector('.catch-btn');
-        const stamp = document.getElementById('stampEffect');
-
-        if (btn && stamp) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault(); // 遷移を一旦止める
-
-                // スタンプ演出
-                stamp.classList.add('active');
-
-                // 数秒後に元の画面に戻す＆ページ遷移
-                setTimeout(() => {
-                    stamp.classList.remove('active');
-                    window.location.href = btn.href;
-                }, 1000); // 1秒間演出してから遷移
-            });
-        }
-    });
-</script>
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.global.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    <script>
+        console.log("✅ window.calendarEvents の内容:", @json($calendarEvents));
+        window.calendarEvents = @json($calendarEvents);
+        window.hunterLogs = @json($logs);
+        window.mapboxToken = @json($mapboxToken);
+        console.log("✅ window.calendarEvents の内容:", @json($calendarEvents));
+    </script>
+@endsection

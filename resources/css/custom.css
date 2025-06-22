@@ -1,3 +1,5 @@
+@import "mapbox-gl/dist/mapbox-gl.css";
+
 /* ============================= 
     ナビゲーションバーのスタイル
 ============================= */
@@ -20,11 +22,18 @@
 /* =============================
   ヒーローセクションのスタイル
 ============================= */
+.hero-section.fade-transition {
+  transition: background-image 1s ease-in-out, opacity 1s ease-in-out;
+  opacity: 1;
+}
+
+/* .hero-section.fade-out {
+  opacity: 0;
+} */
 .hero-section {
-  /* background-image: url('/resources/images/hero.jpg'); */
-  background-image: url('/resources/images/hana.jpg');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -32,7 +41,35 @@
   position: relative;
   text-align: center;
   color: white;
+  overflow: hidden;
 }
+.hero-section.zooming {
+  animation: zoomEffect 5s ease-in-out forwards;
+}
+
+.hero-section.fade-transition {
+  transition: background-image 1s ease-in-out;
+}
+.hero-section.scaled {
+  transform: scale(1.05); /* 常に拡大状態を維持 */
+}
+
+@keyframes zoomEffect {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05); /* ゆるやかに拡大 */
+  }
+}
+
+/* .hero-section.zooming {
+  animation: zoomEffect 5s ease-in-out forwards;
+  background-size: 110% auto;
+  background-repeat: no-repeat;
+  background-position: center;
+} */
+
 
 .hero-section::before {
   content: "";
@@ -459,21 +496,6 @@ label {
   font-size: 20px;
 }
 
-
-/* .blink-marker {
-  width: 8px;
-  height: 8px;
-  background-color: red;
-  border-radius: 50%;
-  animation: blink 1.5s infinite;
-  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.6);
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-} */
-
 .blink-marker {
   width: 8px;
   height: 8px;
@@ -569,6 +591,42 @@ label {
   border: 2px solid #28a745;
   background-color: rgba(40, 167, 69, 0.1);
   transform: scale(1.05);
+}
+
+@keyframes captureFlash {
+  0% {
+      transform: scale(0.5);
+      opacity: 0;
+  }
+  30% {
+      transform: scale(1.3);
+      opacity: 1;
+  }
+  100% {
+      transform: scale(1);
+      opacity: 0;
+  }
+}
+
+#capture-flash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: red;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px 40px;
+  border-radius: 10px;
+  z-index: 9999;
+  display: none;
+  pointer-events: none;
+}
+
+#capture-flash .animate {
+  display: block;
+  animation: captureFlash 1.2s ease-out forwards;
 }
 
 

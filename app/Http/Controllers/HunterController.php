@@ -13,6 +13,7 @@ use App\Models\License;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewHunterNotification;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class HunterController extends Controller
 {
@@ -140,10 +141,33 @@ class HunterController extends Controller
         ->select('id', 'animal_id', 'latitude', 'longitude', 'capture_date')
         ->get();
 
-        // 🔥 ここで記事を取得
-        $articles = Article::latest()->take(5)->get();
+        // FullCalendar用のイベント形式データ
+        $calendarEvents = HunterLog::where('hunter_id', $hunter->id)
+        ->with('animal:id,name')
+        ->select('capture_date', 'animal_id', 'count')
+        ->get()
+        ->map(function ($log) {
+            $animalIcons = [
+                1 => '/images/boar.webp',
+                2 => '/images/deer.webp',
+                3 => '/images/bear.webp',
+                4 => '/images/fox.webp',
+                5 => '/images/racoon.webp',
+                6 => '/images/question.webp',
+            ];
+            return [
+                // 'title' => "{$log->animal->name} {$log->count}頭",
+                'start' => Carbon::parse($log->capture_date)->toDateString(),
+                'allDay' => true,
+                'icon' => $animalIcons[$log->animal_id] ?? '/images/question.png',
+            ];
+        });
 
-        return view('hunters.dashboard', compact('hunter', 'logs', 'articles'));
+        // 管理者記事を取得
+        $articles = Article::latest()->take(5)->get();
+        $mapboxToken = config('services.mapbox.token');
+
+        return view('hunters.dashboard', compact('hunter', 'logs', 'calendarEvents', 'articles', 'mapboxToken'));
     }
     public function apiHunterLogs()
     {

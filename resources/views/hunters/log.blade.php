@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <form action="{{ route('hunters.logs.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="capture-form" action="{{ route('hunters.logs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <!-- 📅 捕獲日時 -->
@@ -137,5 +137,10 @@
         <button type="submit" class="btn btn-success w-100">記録を保存</button>
     </form>
 </div>
+@endsection
 
+@section('scripts')
+<script>
+    window.mapboxToken = @json($mapboxToken);
+</script>
 @endsection
