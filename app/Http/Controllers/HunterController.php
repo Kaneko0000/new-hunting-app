@@ -157,9 +157,11 @@ class HunterController extends Controller
             ];
             return [
                 // 'title' => "{$log->animal->name} {$log->count}頭",
+                'id' => $log->id,
                 'start' => Carbon::parse($log->capture_date)->toDateString(),
                 'allDay' => true,
                 'icon' => $animalIcons[$log->animal_id] ?? '/images/question.png',
+                'count' => $log->count,
             ];
         });
 

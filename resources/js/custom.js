@@ -29,16 +29,31 @@ export function initFullCalendar() {
         // ✅ タイトルを使わず画像だけ描画する
         eventContent: function(arg) {
             const iconPath = arg.event.extendedProps.icon;
+            const count = arg.event.extendedProps.count ?? 1;
+        
             if (!iconPath) return;
+        
+            const container = document.createElement('div');
+        
+            for (let i = 0; i < count; i++) {
+                const img = document.createElement('img');
+                img.src = iconPath;
+                img.alt = 'animal';
+                // img.title = `${count}頭捕獲`;
+                img.style.width = '20px';
+                img.style.height = '20px';
+                img.style.marginRight = '2px';
+                container.appendChild(img);
+            }
+        
+            return { domNodes: [container] };
+        },
 
-            const img = document.createElement('img');
-            img.src = iconPath;
-            img.alt = 'animal';
-            img.style.width = '20px';
-            img.style.height = '20px';
-
-            return { domNodes: [img] }; // 🟢 title不要！帯消える！
+        eventClick: function(info) {
+            const date = info.event.startStr;
+            window.location.href = `/hunters/logs?date=${date}`;
         }
+        
     });
 
     calendar.render();
@@ -270,4 +285,47 @@ export function initCustomUI() {
             document.getElementById("hunting_method_id").value = methodId;
         });
     });
+
+    // 編集モードなどで既に値が入っている場合、対応するUIに .selected を付ける
+    function setInitialSelections() {
+        const selectedAnimalId = document.getElementById("animal_id")?.value;
+        if (selectedAnimalId) {
+            document.querySelectorAll(".animal-option").forEach(el => {
+                if (el.dataset.value === selectedAnimalId) {
+                    el.classList.add("selected");
+                }
+            });
+        }
+
+        const selectedCount = document.getElementById("count")?.value;
+        if (selectedCount) {
+            document.querySelectorAll(".count-option").forEach(el => {
+                if (el.dataset.value === selectedCount) {
+                    el.classList.add("selected");
+                }
+            });
+        }
+
+        const selectedWeather = document.getElementById("weather_id")?.value;
+        if (selectedWeather) {
+            document.querySelectorAll(".weather-option").forEach(el => {
+                if (el.dataset.value === selectedWeather) {
+                    el.classList.add("selected");
+                }
+            });
+        }
+
+        const selectedMethod = document.getElementById("hunting_method_id")?.value;
+        if (selectedMethod) {
+            document.querySelectorAll(".hunting-method-option").forEach(el => {
+                if (el.dataset.value === selectedMethod) {
+                    el.classList.add("selected");
+                }
+            });
+        }
+    }
+
+    // 最後に呼び出し
+    setInitialSelections();
+
 }

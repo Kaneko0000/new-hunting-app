@@ -15,7 +15,21 @@ class HunterLog extends Model
     ];
     
 
-    protected $fillable = ['hunter_id', 'animal_id', 'weather_id', 'latitude', 'longitude', 'capture_date', 'comments', 'photo', 'count', 'hunting_method_id'];
+    protected $fillable = [
+        'hunter_id',
+        'animal_id',
+        'weather_id',
+        'latitude',
+        'longitude',
+        'capture_date',
+        'capture_time',
+        'comments',
+        'photo',
+        'count',
+        'hunting_method_id',
+        'address',
+        'prefecture',
+    ];
 
     public function hunter()
     {

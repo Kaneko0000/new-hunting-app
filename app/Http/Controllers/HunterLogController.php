@@ -10,15 +10,44 @@ use Illuminate\Support\Facades\Auth;
 
 class HunterLogController extends Controller
 {
+    // HunterLogController.php
+    public function index(Request $request)
+    {
+        $date = $request->query('date');
+
+        $logs = HunterLog::where('hunter_id', auth()->id())
+                        ->when($date, fn($query) => $query->whereDate('capture_date', $date))
+                        ->with('animal', 'weather', 'huntingMethod')
+                        ->get();
+
+        return view('hunters.logs.index', compact('logs', 'date'));
+    }
+
     public function create()
     {
         $mapboxToken = config('services.mapbox.token');
-        return view('hunters.log', compact('mapboxToken')); // `log.blade.php` を表示
+        return view('hunters.log', compact('mapboxToken'));
     }
+
+    public function edit(HunterLog $log)
+    {
+        dd($log);
+        $mapboxToken = config('services.mapbox.token');
+        return view('hunters.log', compact('log', 'mapboxToken'));
+    }
+    
+    public function destroy(HunterLog $log, Request $request) 
+    {
+        $log->delete();
+        $date = $request->query('date');
+
+        return redirect()->route('hunters.logs.index', ['date'=> $date])
+            ->with('success', '狩猟記録を削除しました。');
+    }
+
 
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'capture_date' => 'required|date',
             'capture_time' => 'required',
@@ -68,4 +97,52 @@ class HunterLogController extends Controller
 
         return redirect()->route('hunters.dashboard')->with('success', '狩猟記録を保存しました！');
     }
+
+    public function update(Request $request, HunterLog $log)
+{
+    $validatedData = $request->validate([
+        'capture_date' => 'required|date',
+        'capture_time' => 'required',
+        'location' => 'required|string|max:255',
+        'animal_id' => 'required|integer',
+        'count' => 'required|integer|min:1',
+        'weather_id' => 'nullable|integer',
+        'latitude' => 'nullable|numeric',
+        'longitude' => 'nullable|numeric',
+        'comments' => 'nullable|string',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'hunting_method_id' => 'required|integer',
+    ]);
+
+    $fullAddress = $validatedData['location'];
+    $prefecture = null;
+    if (preg_match('/^(.{2,3}県|.{2,3}都|.{2,3}府|.{2,3}道)/u', $fullAddress, $matches)) {
+        $prefecture = $matches[1];
+    }
+
+    $log->fill([
+        'capture_date' => $validatedData['capture_date'],
+        'capture_time' => $validatedData['capture_time'],
+        'animal_id' => $validatedData['animal_id'],
+        'count' => $validatedData['count'],
+        'weather_id' => $validatedData['weather_id'] ?? null,
+        'latitude' => $validatedData['latitude'] ?? null,
+        'longitude' => $validatedData['longitude'] ?? null,
+        'hunting_method_id' => $validatedData['hunting_method_id'],
+        'comments' => $validatedData['comments'] ?? null,
+        'address' => $fullAddress,
+        'prefecture' => $prefecture,
+    ]);
+
+    if ($request->hasFile('photo')) {
+        $path = $request->file('photo')->store('hunter_logs', 'public');
+        $log->photo = $path;
+    }
+
+    $log->save();
+
+    return redirect()->route('hunters.logs.index', ['date' => $log->capture_date])
+        ->with('success', '狩猟記録を更新しました。');
+}
+
 }
