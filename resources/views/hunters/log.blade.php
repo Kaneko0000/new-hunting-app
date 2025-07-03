@@ -24,7 +24,8 @@
         <div class="mb-3">
             <label for="capture_date" class="form-label">捕獲日</label>
             <input type="date" id="capture_date" name="capture_date" class="form-control" required
-            value="{{ old('capture_date', $log->capture_date ?? '') }}">
+            value="{{ old('capture_date', isset($log) ? $log->capture_date->format('Y-m-d') : '') }}">
+
         </div>
         <div class="mb-3">
             <label for="capture_time" class="form-label">捕獲時間</label>
@@ -154,7 +155,7 @@
             <label for="photo" class="form-label">捕獲写真 (任意)</label>
             <input type="file" id="photo" name="photo" class="form-control">
         </div>
-        
+
         <!-- ✅ 保存ボタン -->
         <button type="submit" class="btn btn-success w-100">記録を保存</button>
     </form>

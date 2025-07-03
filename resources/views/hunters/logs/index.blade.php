@@ -31,6 +31,7 @@
             </div>
         @empty
             <p>この日に記録はありません。</p>
+            <!-- <p>{{ $date }} の狩猟記録はありません。</p> -->
         @endforelse
         <div class="text-center my-4">
             <a href="{{ route('hunters.dashboard') }}" class="btn btn-secondary">

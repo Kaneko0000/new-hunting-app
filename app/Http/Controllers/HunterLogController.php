@@ -15,10 +15,15 @@ class HunterLogController extends Controller
     {
         $date = $request->query('date');
 
-        $logs = HunterLog::where('hunter_id', auth()->id())
-                        ->when($date, fn($query) => $query->whereDate('capture_date', $date))
-                        ->with('animal', 'weather', 'huntingMethod')
-                        ->get();
+        if ($date) {
+            $logs = HunterLog::where('hunter_id', auth()->id())
+                ->whereDate('capture_date', $date)
+                ->when($date, fn($query) => $query->whereDate('capture_date', $date))
+                ->with('animal', 'weather', 'huntingMethod')
+                ->get();
+        } else {
+            $logs = collect();
+        }
 
         return view('hunters.logs.index', compact('logs', 'date'));
     }
@@ -31,7 +36,7 @@ class HunterLogController extends Controller
 
     public function edit(HunterLog $log)
     {
-        dd($log);
+        // dd($log);
         $mapboxToken = config('services.mapbox.token');
         return view('hunters.log', compact('log', 'mapboxToken'));
     }

@@ -144,7 +144,7 @@ class HunterController extends Controller
         // FullCalendar用のイベント形式データ
         $calendarEvents = HunterLog::where('hunter_id', $hunter->id)
         ->with('animal:id,name')
-        ->select('capture_date', 'animal_id', 'count')
+        ->select('id', 'capture_date', 'animal_id', 'count')
         ->get()
         ->map(function ($log) {
             $animalIcons = [

@@ -37,6 +37,7 @@ class HunterLogSeeder extends Seeder
                     'latitude' => 32.4 + mt_rand() / mt_getrandmax() * 0.2,
                     'longitude' => 130.0 + mt_rand() / mt_getrandmax() * 0.2,
                     // 'address' => $fullAddress,
+                    
                     'prefecture' => collect($prefectures)->random(),
                     'capture_date' => now()->subDays(rand(0, 30)),
                     'capture_time' => '07:07:00', 

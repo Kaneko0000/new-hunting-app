@@ -53,6 +53,11 @@ export function initFullCalendar() {
             const date = info.event.startStr;
             window.location.href = `/hunters/logs?date=${date}`;
         }
+        // eventClick: function(info) {
+        //     const logId = info.event.id;
+        //     window.location.href = `/hunters/logs/${logId}/edit`; 
+        // }
+        
         
     });
 
