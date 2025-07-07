@@ -18,7 +18,6 @@ class HunterLogController extends Controller
         if ($date) {
             $logs = HunterLog::where('hunter_id', auth()->id())
                 ->whereDate('capture_date', $date)
-                ->when($date, fn($query) => $query->whereDate('capture_date', $date))
                 ->with('animal', 'weather', 'huntingMethod')
                 ->get();
         } else {
@@ -43,8 +42,8 @@ class HunterLogController extends Controller
     
     public function destroy(HunterLog $log, Request $request) 
     {
+        $date = $request->query('date') ?? $log->capture_date?->toDateString();
         $log->delete();
-        $date = $request->query('date');
 
         return redirect()->route('hunters.logs.index', ['date'=> $date])
             ->with('success', '狩猟記録を削除しました。');
@@ -146,7 +145,8 @@ class HunterLogController extends Controller
 
     $log->save();
 
-    return redirect()->route('hunters.logs.index', ['date' => $log->capture_date])
+    // return redirect()->route('hunters.logs.index', ['date' => $log->capture_date])
+    return redirect()->route('hunters.logs.index', ['date' => $log->capture_date->toDateString()])
         ->with('success', '狩猟記録を更新しました。');
 }
 
